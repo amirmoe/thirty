@@ -11,6 +11,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     private int mNumOfTabs;
     private ScoreFragment mScoreFragment;
     private DiceFragment mDiceFragment;
+    private TabSelector mTabSelector;
 
     /**
      * Initialize the PagerAdapter and also create new fragment-objects.
@@ -23,6 +24,10 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         this.mNumOfTabs = NumOfTabs;
         this.mScoreFragment = new ScoreFragment();
         this.mDiceFragment = new DiceFragment();
+    }
+
+    public void setTabSelector(TabSelector tabSelector) {
+        mTabSelector = tabSelector;
     }
 
     /**
@@ -50,6 +55,15 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                     @Override
                     public void needRestart() {}
                 });
+                /**
+                 * Callback used for fragment DiceFragment to change view to ScoreFragment
+                 */
+                tab1.setTabSelector(new TabSelector() {
+                    @Override
+                    public void onTabSwitch(int tabPosition) {
+                        mTabSelector.onTabSwitch(tabPosition);
+                    }
+                });
                 return tab1;
             case 1:
                 ScoreFragment tab2 = this.mScoreFragment;
@@ -64,6 +78,15 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                     public void needRestart() {
                         DiceFragment frag = (DiceFragment) getItem(0);
                         frag.resetValues();
+                    }
+                });
+                /**
+                 * Callback used for fragment ScoreFragment to change view to DiceFragment
+                 */
+                tab2.setTabSelector(new TabSelector() {
+                    @Override
+                    public void onTabSwitch(int tabPosition) {
+                        mTabSelector.onTabSwitch(tabPosition);
                     }
                 });
                 return tab2;

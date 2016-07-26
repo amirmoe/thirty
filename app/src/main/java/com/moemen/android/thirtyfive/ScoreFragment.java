@@ -17,17 +17,7 @@ public class ScoreFragment extends Fragment {
     private static final String TAG = "FELSÖKNING";
 
     private Communicator comm;
-
-    private TextView low;
-    private TextView four;
-    private TextView five;
-    private TextView six;
-    private TextView seven;
-    private TextView eight;
-    private TextView nine;
-    private TextView ten;
-    private TextView eleven;
-    private TextView twelve;
+    private TabSelector mTabSelector;
 
     private TextView scoreText;
     private Button restartButton;
@@ -47,6 +37,14 @@ public class ScoreFragment extends Fragment {
     }
 
     /**
+     * This method is called upon in the pagerAdapter to switch tab view after all 10 rounds
+     * @param tabSelector Initialize the tabSelector
+     */
+    public void setTabSelector(TabSelector tabSelector) {
+        mTabSelector = tabSelector;
+    }
+
+    /**
      * Initiate all the TextViews and an onClickListener for the restart button.
      * When pressed, tell dicesFragment to reset the scores and also remove the final score
      * TextView
@@ -61,9 +59,9 @@ public class ScoreFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_score, parent, false);
 
-        scores = new TextView[] {low,four,five,six,seven,eight,nine,ten,eleven,twelve};
+        scores = new TextView[10];
 
-        for (int i = 0; i<scores.length; i++){
+        for (int i = 0; i < scores.length; i++){
             scores[i] = (TextView) v.findViewById(scoreID[i]);
         }
         scoreText = (TextView) v.findViewById(R.id.scoreTextView);
@@ -75,6 +73,8 @@ public class ScoreFragment extends Fragment {
                 restartButton.setVisibility(View.INVISIBLE);
                 scoreText.setText("");
                 comm.needRestart();
+                mTabSelector.onTabSwitch(0);
+
 
             }
         });

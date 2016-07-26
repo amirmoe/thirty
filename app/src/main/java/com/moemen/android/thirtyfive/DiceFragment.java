@@ -26,20 +26,7 @@ public class DiceFragment extends Fragment {
     private static int[] sumsum;
 
     private Communicator comm;
-
-    private Die mDieOne;
-    private Die mDieTwo;
-    private Die mDieThree;
-    private Die mDieFour;
-    private Die mDieFive;
-    private Die mDieSix;
-
-    private ImageView mDieOneImage;
-    private ImageView mDieTwoImage;
-    private ImageView mDieThreeImage;
-    private ImageView mDieFourImage;
-    private ImageView mDieFiveImage;
-    private ImageView mDieSixImage;
+    private TabSelector mTabSelector;
 
     private Spinner scoreSpinner;
     private ArrayAdapter<CharSequence> spinnerAdapter;
@@ -66,6 +53,14 @@ public class DiceFragment extends Fragment {
      */
     public void setCommunicator(Communicator communicator) {
         this.comm = communicator;
+    }
+
+    /**
+     * This method is called upon in the pagerAdapter to switch tab view after all 10 rounds
+     * @param tabSelector Initialize the tabSelector
+     */
+    public void setTabSelector(TabSelector tabSelector) {
+        mTabSelector = tabSelector;
     }
 
     /**
@@ -191,6 +186,10 @@ public class DiceFragment extends Fragment {
 
             spinnerAdapter.remove(scoreSpinner.getSelectedItem().toString());
             spinnerAdapter.notifyDataSetChanged();
+
+            if (countRound==10){
+                mTabSelector.onTabSwitch(1);
+            }
         }
     }
 
@@ -284,7 +283,7 @@ public class DiceFragment extends Fragment {
 
 
         for (int i = 0; i < solution.size(); i++) {
-            haveChangedValue= false;
+            haveChangedValue = false;
             for (int j = 0; j < diceList.length; j++) {
                 if (solution.get(i) == (diceList[j].getDiceValue() + 1)) {
                     if (!diceList[j].toBeScore()) {
@@ -295,33 +294,19 @@ public class DiceFragment extends Fragment {
 
                     } else {
                         possibleFalsePair = true;
-
                     }
-                } if (j == (diceList.length-1) && haveChangedValue == false && possibleFalsePair) {
-                        falsePair = true;
-                    }
+                }
 
+                if (j == (diceList.length-1) && !haveChangedValue && possibleFalsePair) {
+                    falsePair = true;
                 }
             }
+        }
         if (falsePair) {
             for (int i= 0; i < falsePairIndex.size(); i++) {
                 diceList[falsePairIndex.get(i)].setToBeScore(false);
             }
         }
-    }
-
-    /*
-     * Creates all the dice objects
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mDieOne = new Die();
-        mDieTwo = new Die();
-        mDieThree = new Die();
-        mDieFour = new Die();
-        mDieFive = new Die();
-        mDieSix = new Die();
     }
 
     /**
@@ -338,10 +323,13 @@ public class DiceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_game, parent, false);
 
-        diceImageList =  new ImageView[] {mDieOneImage, mDieTwoImage, mDieThreeImage, mDieFourImage,mDieFiveImage,mDieSixImage};
-        diceList = new Die[] {mDieOne, mDieTwo, mDieThree, mDieFour, mDieFive, mDieSix};
+        diceImageList =  new ImageView[6];
+        diceList = new Die[6];
+        for (int i = 0; i < diceList.length; i++) {
+            diceList[i] = new Die();
+        }
 
-        for (int i = 0; i<diceImageList.length; i++){
+        for (int i = 0; i < diceImageList.length; i++){
             diceImageList[i] = (ImageView) v.findViewById(diceID[i]);
             diceImageList[i].setImageResource(whiteDice[diceList[i].getDiceValue()]);
         }
